@@ -1,0 +1,73 @@
+server:
+  port: 8001
+app:
+  auth:
+    api-key:
+      characters-length: '64'
+    jwt:
+      reset-password-token:
+        expiration-in-ms: '604800000'
+        secret: anotherForResetPasswordRandomTextHereThatShouldBeLongEnoughToBeConsideredAsSecureKey
+      access-token:
+        expiration-in-ms: '3600000'
+        cookie-name: accessToken
+      refresh-token:
+        expiration-in-ms: '36000000'
+        cookie-name: refreshToken
+      secret: aRandomTextHereThatShouldBeLongEnoughToBeConsideredAsSecureKey
+      invitation-token:
+        secret: anotherForEmailInvitationRandomTextHereThatShouldBeLongEnoughToBeConsideredAsSecureKey
+        expiration-in-ms: '604800000'
+spring:
+  jpa:
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: '20'
+        id:
+          optimizer:
+            pooled:
+              preferred: pooled-lo
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    open-in-view: false
+  profiles:
+    active: dev
+  datasource:
+    password: admin
+    username: postgres
+    url: jdbc:postgresql://localhost:5430/workive-db
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - health
+          - info
+          - gateway
+          - prometheus
+    enabled-by-default: false
+  endpoint:
+    prometheus:
+      enabled: true
+    health:
+      enabled: true
+      show-details: always
+    metrics:
+      enabled: true
+    info:
+      enabled: true
+
+springdoc:
+  swagger-ui:
+    disable-swagger-default-url: true
+    config-url: "./openapi.json/swagger-config"
+    url: "./openapi.json"
+  api-docs:
+    enabled: true
+    path: /swagger-ui/openapi.json
+

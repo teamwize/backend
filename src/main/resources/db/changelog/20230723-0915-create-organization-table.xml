@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet id="20221230-1304-create-organization-table" author="M.Karimi">
+        <createSequence sequenceName="organization_id_seq" startValue="1" minValue="1" incrementBy="1" cycle="false"/>
+        <createTable tableName="organizations">
+            <column name="id" type="BIGINT" defaultValue="nextval('organization_id_seq')">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="organization_pkey"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="updated_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="name" type="VARCHAR">
+                <constraints nullable="false"/>
+            </column>
+            <column name="country" type="VARCHAR">
+                <constraints nullable="false"/>
+            </column>
+            <column name="metadata" type="JSONB" />
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

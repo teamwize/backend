@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet id="20221230-1311-create-user-table" author="M.Karimi">
+        <createSequence sequenceName="user_id_seq" startValue="1" minValue="1" incrementBy="1" cycle="false"/>
+
+        <createTable tableName="users">
+            <column name="id" type="BIGINT" defaultValue="nextval('user_id_seq')">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="user_pkey"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="updated_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="role" type="VARCHAR">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="VARCHAR">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="first_name" type="VARCHAR"/>
+            <column name="last_name" type="VARCHAR"/>
+            <column name="phone" type="VARCHAR"/>
+            <column name="password" type="VARCHAR"/>
+            <column name="organization_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="country" type="VARCHAR" />
+
+            <column name="timezone" type="VARCHAR" />
+
+            <column name="status" type="VARCHAR"/>
+
+            <column name="metadata" type="JSONB"/>
+
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="users" baseColumnNames="organization_id"
+                                 constraintName="user_organization_id_fkey"
+                                 referencedTableName="organizations" referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="users" baseColumnNames="site_id"
+                                 constraintName="user_site_id_fkey"
+                                 referencedTableName="sites" referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="users" baseColumnNames="invitor_user_id"
+                                 constraintName="user_invitor_user_id_fkey"
+                                 referencedTableName="users" referencedColumnNames="id"/>
+    </changeSet>
+</databaseChangeLog>
+
