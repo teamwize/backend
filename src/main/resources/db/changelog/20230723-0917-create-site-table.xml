@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet id="20230729-1300-create-site-table" author="M.Karimi">
+        <createSequence sequenceName="site_id_seq" startValue="1" minValue="1" incrementBy="1" cycle="false"/>
+
+        <createTable tableName="sites">
+            <column name="id" type="BIGINT" defaultValue="nextval('site_id_seq')">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="site_pkey"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="updated_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="is_default" type="boolean"/>
+            <column name="name" type="VARCHAR">
+                <constraints nullable="false"/>
+            </column>
+            <column name="address_country" type="VARCHAR"/>
+            <column name="address_city" type="VARCHAR"/>
+            <column name="address_street" type="VARCHAR"/>
+            <column name="address_house_number" type="VARCHAR"/>
+            <column name="address_house_letter" type="VARCHAR"/>
+            <column name="address_zip_code" type="VARCHAR"/>
+            <column name="location_lat" type="FLOAT"/>
+            <column name="location_lng" type="FLOAT"/>
+            <column name="language" type="VARCHAR"/>
+            <column name="timezone" type="VARCHAR"/>
+            <column name="status" type="VARCHAR"/>
+            <column name="organization_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="metadata" type="JSONB"/>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="sites" baseColumnNames="organization_id"
+                                 constraintName="site_organization_id_fkey"
+                                 referencedTableName="organizations" referencedColumnNames="id"/>
+    </changeSet>
+</databaseChangeLog>

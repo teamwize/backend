@@ -27,12 +27,9 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     private final AuthenticationService detailsService;
     private final TokenService tokenService;
 
-    @Value("${app.auth.jwt.access-token.cookie-name}")
-    private String accessTokenCookieName;
-    @Value("${app.auth.jwt.header-name}")
-    private String jwtHeaderName;
-    @Value("${app.auth.api-key.header-name}")
-    private String apiKeyHeaderName;
+    private String jwtHeaderName = "Authorization";
+
+    private String apiKeyHeaderName = "API-Key";
 
 
     @Override
@@ -44,7 +41,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         try {
-            var jwt = getJwtToken(request, true);
+            var jwt = getJwtToken(request);
             if (!StringUtils.hasText(jwt) || !tokenService.validateToken(jwt)) {
                 return;
             }
@@ -64,23 +61,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         return StringUtils.hasText(request.getHeader(apiKeyHeaderName));
     }
 
-    private String getJwtToken(HttpServletRequest request, boolean fromCookie) {
-        if (fromCookie) {
-            return getJwtFromCookie(request);
-        }
+    private String getJwtToken(HttpServletRequest request) {
         return tokenService.getJwtFromRequest(request.getHeader(jwtHeaderName));
     }
 
-    private String getJwtFromCookie(HttpServletRequest request) {
-        if (request.getCookies() == null || request.getCookies().length == 0) {
-            return null;
-        }
-        var cookies = request.getCookies();
-        for (var cookie : cookies) {
-            if (accessTokenCookieName.equals(cookie.getName())) {
-                return cookie.getValue();
-            }
-        }
-        return null;
-    }
 }

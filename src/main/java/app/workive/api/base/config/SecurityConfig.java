@@ -42,6 +42,7 @@ public class SecurityConfig {
             "/swagger-resources/**",
             "/stripe/webhook"
     };
+    private final PasswordEncoder passwordEncoder;
     private final AuthenticationService detailsService;
     private final JwtAuthorizationFilter jwtFilter;
 //    private final ApiKeyAuthorizationFilter apiKeyFilter;
@@ -49,12 +50,6 @@ public class SecurityConfig {
     public static boolean shouldBeIgnored(String requestPath) {
         return Arrays.stream(permittedPatterns)
                 .anyMatch(e -> new AntPathMatcher().match(e, requestPath));
-    }
-
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
     }
 
     @Bean
@@ -67,7 +62,7 @@ public class SecurityConfig {
     public AuthenticationProvider authenticationProvider() {
         var authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(detailsService);
-        authProvider.setPasswordEncoder(passwordEncoder());
+        authProvider.setPasswordEncoder(passwordEncoder);
         return authProvider;
     }
 

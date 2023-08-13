@@ -14,6 +14,10 @@ public class SecurityService {
         return this.getUserDetails().getOrganizationId();
     }
 
+    public Long getSiteId() {
+        return this.getUserDetails().getSiteId();
+    }
+
     public Long getUserId() {
         return this.getUserDetails().getId();
     }
@@ -27,5 +31,8 @@ public class SecurityService {
     }
 
 
+    public UserRole getAuthenticatedUserRole() {
+        return getUserDetails().getRole();
+    }
 }
 

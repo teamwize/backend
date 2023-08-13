@@ -19,7 +19,10 @@
             <column name="country" type="VARCHAR">
                 <constraints nullable="false"/>
             </column>
-            <column name="metadata" type="JSONB" />
+            <column name="metadata" type="JSONB"/>
         </createTable>
+    </changeSet>
+    <changeSet id="20230812-1111-make-country-nullable-in-organization-table" author="M.Karimi">
+        <dropNotNullConstraint tableName="organizations" columnName="country"/>
     </changeSet>
 </databaseChangeLog>

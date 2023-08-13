@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.Map;
 
 
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -32,11 +33,11 @@ public class TokenService {
     private String secret;
     @Value("${app.auth.jwt.access-token.expiration-in-ms}")
     private long accessTokenExpirationInMs;
-    @Value("${app.auth.jwt.access-token.cookie-name}")
+    @Value("${app.auth.jwt.access-token.name}")
     private String accessTokenCookieName;
     @Value("${app.auth.jwt.refresh-token.expiration-in-ms}")
     private long refreshTokenExpirationInMs;
-    @Value("${app.auth.jwt.refresh-token.cookie-name}")
+    @Value("${app.auth.jwt.refresh-token.name}")
     private String refreshTokenCookieName;
     @Value("${app.auth.jwt.invitation-token.secret}")
     private String activationTokenSecret;
@@ -99,10 +100,11 @@ public class TokenService {
         return false;
     }
 
-    public String generateAccessToken(String subject, Long organizationId, Long userId, UserRole role, LocalDateTime expiresAt) {
+    public String generateAccessToken(String subject, Long organizationId, Long siteId, Long userId, UserRole role, LocalDateTime expiresAt) {
         Map<String, Object> claims = Map.of(
                 "type", JwtTokenType.ACCESS_TOKEN.toString(),
                 "organizationId", organizationId,
+                "siteId", siteId,
                 "userId", userId,
                 "role", role.toString()
         );
@@ -145,5 +147,8 @@ public class TokenService {
     }
 
 }
+
+
+
 
 

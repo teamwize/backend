@@ -3,6 +3,7 @@ package app.workive.api.user.domain.entity;
 
 import app.workive.api.base.domain.entity.BaseAuditEntity;
 import app.workive.api.organization.domain.entity.Organization;
+import app.workive.api.site.domain.entity.Site;
 import app.workive.api.user.domain.UserRole;
 import app.workive.api.user.domain.UserStatus;
 import lombok.Getter;
@@ -18,21 +19,23 @@ public class User extends BaseAuditEntity {
     @Id
     @GeneratedValue(generator = "user_id_seq_generator")
     @SequenceGenerator(name = "user_id_seq_generator", sequenceName = "user_id_seq", allocationSize = 1)
-    protected Long id;
+    private Long id;
 
     @Enumerated(EnumType.STRING)
-    protected UserRole role;
-    protected String email;
-    protected String password;
-    protected String phone;
-    protected String firstName;
-    protected String lastName;
+    private UserRole role;
+    private String email;
+    private String password;
+    private String phone;
+    private String firstName;
+    private String lastName;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    protected Organization organization;
+    private Organization organization;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Site site;
 
     @Enumerated(EnumType.STRING)
-    protected UserStatus status;
+    private UserStatus status;
 
 }

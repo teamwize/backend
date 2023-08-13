@@ -1,8 +1,10 @@
 package app.workive.api.user.service;
 
+import app.workive.api.auth.domain.AuthUserDetails;
 import app.workive.api.auth.exception.UserAlreadyActivatedException;
 import app.workive.api.organization.domain.entity.Organization;
 import app.workive.api.organization.domain.response.OrganizationResponse;
+import app.workive.api.site.domain.entity.Site;
 import app.workive.api.user.domain.UserRole;
 import app.workive.api.user.domain.UserStatus;
 import app.workive.api.user.domain.entity.User;
@@ -18,6 +20,7 @@ import app.workive.api.user.mapper.UserMapper;
 import app.workive.api.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,31 +55,50 @@ public class UserService {
         return userMapper.toUserResponse(user);
     }
 
+    public UserDetails getUserDetails(Long id) throws UserNotFoundException {
+        var user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(null));
+
+        return AuthUserDetails.build(user);
+    }
+
+
+
     public List<UserResponse> getSiteUsers(Long organizationId) {
         var users = userRepository.findByOrganizationId(organizationId);
         return userMapper.toUserResponses(users);
     }
 
     @Transactional
-    public UserResponse createOrganizationAdmin(OrganizationResponse organization, AdminUserCreateRequest request) throws UserAlreadyExistsException {
+    public UserResponse createOrganizationAdmin(Long organizationId,Long siteId, AdminUserCreateRequest request) throws UserAlreadyExistsException {
         checkIfUserExists(request.getEmail());
         var user = buildUser(request.getEmail(),
-                UserRole.ADMIN,
+                UserRole.ORGANIZATION_ADMIN,
                 request.getFirstName(),
                 request.getLastName(),
                 request.getPhone(),
-                organization.getId()
+                organizationId,
+                siteId
         );
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        return userMapper.toUserResponse(saveUser(user));
+        user = userRepository.merge(user);
+        return userMapper.toUserResponse(user);
     }
 
     @Transactional
-    public UserResponse createSiteUser(Long organizationId, UserCreateRequest request)
+    public UserResponse createSiteUser(Long organizationId,Long siteId, UserCreateRequest request)
             throws UserAlreadyExistsException {
         checkIfUserExists(request.getEmail());
-        var user = buildUser(request.getEmail(), request.getRole(), request.getFirstName(), request.getLastName(), request.getPhone(), organizationId);
-        saveUser(user);
+        var user = buildUser(
+                request.getEmail(),
+                request.getRole(),
+                request.getFirstName(),
+                request.getLastName(),
+                request.getPhone(),
+                organizationId,
+                siteId
+        );
+        userRepository.update(user);
         return userMapper.toUserResponse(user);
     }
 
@@ -97,7 +119,7 @@ public class UserService {
         if (request.getPhone() != null) {
             request.getPhone().ifPresent(user::setPhone);
         }
-        user = saveUser(user);
+        user = userRepository.update(user);
         return userMapper.toUserResponse(user);
     }
 
@@ -111,7 +133,7 @@ public class UserService {
 
         var user = getById(organizationId, targetUserId);
         user.setStatus(status);
-        user = saveUser(user);
+        user = userRepository.update(user);
 
         return userMapper.toUserResponse(user);
     }
@@ -124,14 +146,14 @@ public class UserService {
         checkPasswordMatch(currentPassword, user.getPassword());
 
         user.setPassword(passwordEncoder.encode(newPassword));
-        saveUser(user);
+        userRepository.update(user);
     }
 
     @Transactional
     public void resetPassword(Long siteId, Long userId, String password) throws UserNotFoundException {
         var user = getById(siteId, userId);
         user.setPassword(passwordEncoder.encode(password));
-        userRepository.save(user);
+        userRepository.update(user);
     }
 
     @Transactional
@@ -140,7 +162,7 @@ public class UserService {
         var user = getById(siteId, userId);
         checkActivatingIsAllowed(userId, password);
         user.setPassword(passwordEncoder.encode(password));
-        return userMapper.toUserResponse(userRepository.save(user));
+        return userMapper.toUserResponse(userRepository.update(user));
     }
 
     public void checkActivatingIsAllowed(Long userId, String password) throws UserAlreadyActivatedException {
@@ -150,7 +172,7 @@ public class UserService {
     }
 
     private User buildUser(String email, UserRole role, String firstName, String lastName, String phone,
-                           Long organizationId) {
+                           Long organizationId,Long siteId) {
         return new User()
                 .setStatus(UserStatus.ENABLED)
                 .setEmail(email)
@@ -158,12 +180,10 @@ public class UserService {
                 .setFirstName(firstName)
                 .setLastName(lastName)
                 .setPhone(phone)
+                .setSite(new Site(siteId))
                 .setOrganization(new Organization(organizationId));
     }
 
-    private User saveUser(User user) {
-        return userRepository.save(user);
-    }
 
     private User getById(Long organizationId, Long userId) throws UserNotFoundException {
         return userRepository.findByOrganizationIdAndId(organizationId, userId)

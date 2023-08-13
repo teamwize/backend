@@ -7,16 +7,16 @@ app:
     jwt:
       reset-password-token:
         expiration-in-ms: '604800000'
-        secret: anotherForResetPasswordRandomTextHereThatShouldBeLongEnoughToBeConsideredAsSecureKey
+        secret: THIS_IS_THE_DEFAULT_RANDOM_STRING
       access-token:
         expiration-in-ms: '3600000'
-        cookie-name: accessToken
+        name: accessToken
       refresh-token:
         expiration-in-ms: '36000000'
-        cookie-name: refreshToken
-      secret: aRandomTextHereThatShouldBeLongEnoughToBeConsideredAsSecureKey
+        name: refreshToken
+      secret: THIS_IS_THE_DEFAULT_RANDOM_STRING
       invitation-token:
-        secret: anotherForEmailInvitationRandomTextHereThatShouldBeLongEnoughToBeConsideredAsSecureKey
+        secret: THIS_IS_THE_DEFAULT_RANDOM_STRING
         expiration-in-ms: '604800000'
 spring:
   jpa:
@@ -31,6 +31,8 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: validate
+      naming:
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyComponentPathImpl
     show-sql: true
     open-in-view: false
   profiles:

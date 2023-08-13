@@ -15,9 +15,4 @@ public class AsyncConfig {
 
 
 
-    @Bean("geocodingExecutor")
-    ExecutorService geocodingExecutor() {
-        return Executors.newFixedThreadPool(20, new CustomizableThreadFactory("Geocoding-Worker"));
-    }
-
 }

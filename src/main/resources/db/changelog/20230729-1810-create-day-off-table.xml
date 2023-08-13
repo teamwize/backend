@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="20230729-1810-create-day-off-table" author="M.Karimi">
+        <createSequence sequenceName="api_key_id_seq" startValue="1" minValue="1" incrementBy="1" cycle="false"/>
+
+        <createTable tableName="api_keys">
+            <column name="id" type="BIGINT" defaultValue="nextval('api_key_id_seq')">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="api_key_pkey"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="updated_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="key" type="VARCHAR">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="VARCHAR" />
+            <column name="expires_at" type="TIMESTAMP WITHOUT TIME ZONE" />
+            <column name="organization_id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="scopes" type="JSON" />
+            <column name="metadata" type="JSONB" />
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="api_keys" baseColumnNames="organization_id"
+                                 constraintName="api_key_organization_id_fkey"
+                                 referencedTableName="organizations" referencedColumnNames="id"/>
+    </changeSet>
+</databaseChangeLog>

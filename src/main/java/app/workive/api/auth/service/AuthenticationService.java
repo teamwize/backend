@@ -8,6 +8,7 @@ import app.workive.api.auth.exception.InvalidCredentialException;
 import app.workive.api.base.exception.BaseException;
 import app.workive.api.organization.domain.event.OrganizationCreatedEvent;
 import app.workive.api.organization.service.OrganizationService;
+import app.workive.api.site.service.SiteService;
 import app.workive.api.user.domain.request.AdminUserCreateRequest;
 import app.workive.api.user.exception.UserAlreadyExistsException;
 import app.workive.api.user.exception.UserNotFoundException;
@@ -33,20 +34,24 @@ public class AuthenticationService implements UserDetailsService {
     private final UserService userService;
     private final ApplicationEventPublisher eventPublisher;
 
-//    private final ApiKeyService apiKeyService;
+    private final SiteService siteService;
 
+//    private final ApiKeyService apiKeyService;
 
     @Transactional(rollbackFor = BaseException.class)
     public AuthenticationResponse register(RegistrationRequest request) throws UserAlreadyExistsException {
         var organization = organizationService.registerOrganization(request.getOrganizationName());
+        var site = siteService.createDefaultSite(organization.getId(), request.getCountryCode(), request.getTimezone());
+
         var registerRequest = new AdminUserCreateRequest(request.getEmail(), request.getPassword(),
                 request.getFirstName(), request.getLastName(), request.getPhone());
-        var user = userService.createOrganizationAdmin(organization, registerRequest);
-        eventPublisher.publishEvent(new OrganizationCreatedEvent(organization,  user));
+        var user = userService.createOrganizationAdmin(organization.getId(), site.getId(), registerRequest);
+        eventPublisher.publishEvent(new OrganizationCreatedEvent(organization, user));
 
         var accessToken = tokenService.generateAccessToken(
                 user.getId().toString(),
                 organization.getId(),
+                site.getId(),
                 user.getId(),
                 user.getRole(),
                 LocalDateTime.now().plusDays(1)
@@ -61,6 +66,7 @@ public class AuthenticationService implements UserDetailsService {
             var accessToken = tokenService.generateAccessToken(
                     user.getId().toString(),
                     user.getOrganization().getId(),
+                    user.getSite().getId(),
                     user.getId(),
                     user.getRole(),
                     LocalDateTime.now().plusDays(1)
@@ -74,8 +80,12 @@ public class AuthenticationService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return null;
+    public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
+        try {
+            return userService.getUserDetails(Long.valueOf(userId));
+        } catch (UserNotFoundException ex) {
+            throw new UsernameNotFoundException(userId);
+        }
     }
 
 //    public ApiKeyValidateResponse validateApiKey(ApiKeyValidateRequest request) throws ApiKeyNotFoundException {

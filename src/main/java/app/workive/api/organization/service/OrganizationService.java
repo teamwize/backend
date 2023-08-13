@@ -34,7 +34,7 @@ public class OrganizationService {
     public OrganizationResponse updateOrganization(long organizationId, String name) throws OrganizationNotFoundException {
         var organization = getById(organizationId)
                 .setName(name);
-        organization = saveOrganization(organization);
+        organization = organizationRepository.update(organization);
         return organizationMapper.toResponse(organization);
     }
 
@@ -45,7 +45,7 @@ public class OrganizationService {
 
     private Organization createOrganization(String name) {
         Organization organization = buildOrganization(name);
-        return saveOrganization(organization);
+        return organizationRepository.persist(organization);
     }
 
     private Organization buildOrganization(String name) {
@@ -53,7 +53,5 @@ public class OrganizationService {
                 .setName(name);
     }
 
-    private Organization saveOrganization(Organization organization) {
-        return organizationRepository.save(organization);
-    }
+
 }

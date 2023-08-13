@@ -24,7 +24,13 @@ public class AuthUserDetails implements UserDetails {
     private UserRole role;
     private String apiKey;
 
-    public AuthUserDetails(Long id, String email, String password, UserStatus status, Long organizationId, UserRole role) {
+    public AuthUserDetails(Long id,
+                           String email,
+                           String password,
+                           UserStatus status,
+                           Long organizationId,
+                           Long siteId,
+                           UserRole role) {
         this.id = id;
         this.email = email;
         this.password = password;
@@ -34,7 +40,13 @@ public class AuthUserDetails implements UserDetails {
         this.role = role;
     }
 
-    public AuthUserDetails(Long id, String apiKey, String email, String password, UserStatus status, Long organizationId,
+    public AuthUserDetails(Long id,
+                           String apiKey,
+                           String email,
+                           String password,
+                           UserStatus status,
+                           Long organizationId,
+                           Long siteId,
                            UserRole role) {
         this.id = id;
         this.email = email;
@@ -46,16 +58,16 @@ public class AuthUserDetails implements UserDetails {
         this.role = role;
     }
 
-    public static AuthUserDetails build(Long userId, UserRole role) {
-        return new AuthUserDetails(userId, null, null, UserStatus.ENABLED, null, role);
+    public static AuthUserDetails build(Long siteId, Long userId, UserRole role) {
+        return new AuthUserDetails(userId, null, null, UserStatus.ENABLED, null, siteId, role);
     }
 
-    public static AuthUserDetails build(Long userId, Long organizationId, UserRole role) {
-        return new AuthUserDetails(userId, null, null, UserStatus.ENABLED,  organizationId, role);
+    public static AuthUserDetails build(Long userId, Long organizationId, Long siteId, UserRole role) {
+        return new AuthUserDetails(userId, null, null, UserStatus.ENABLED, organizationId, siteId, role);
     }
 
-    public static AuthUserDetails build(String apiKey, Long organizationId, UserRole role) {
-        return new AuthUserDetails(null, apiKey, null, null, UserStatus.ENABLED,  organizationId, role);
+    public static AuthUserDetails build(String apiKey, Long organizationId, Long siteId, UserRole role) {
+        return new AuthUserDetails(null, apiKey, null, null, UserStatus.ENABLED, organizationId, siteId, role);
     }
 
 
@@ -66,11 +78,16 @@ public class AuthUserDetails implements UserDetails {
                 user.getPassword(),
                 user.getStatus(),
                 user.getOrganization() == null ? null : user.getOrganization().getId(),
+                user.getSite() == null ? null : user.getSite().getId(),
                 user.getRole());
     }
 
     public Long getId() {
         return id;
+    }
+
+    public Long getSiteId() {
+        return siteId;
     }
 
     public String getApiKey() {

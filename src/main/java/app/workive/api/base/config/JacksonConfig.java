@@ -22,14 +22,4 @@ public class JacksonConfig {
                 .build();
     }
 
-
-    @Bean
-    public ObjectMapper vrpObjectMapper() {
-        return Jackson2ObjectMapperBuilder.json()
-                .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-                .propertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
-                .featuresToEnable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS)
-                .build();
-    }
-
 }

@@ -24,7 +24,12 @@
             <column name="last_name" type="VARCHAR"/>
             <column name="phone" type="VARCHAR"/>
             <column name="password" type="VARCHAR"/>
+
             <column name="organization_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="site_id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
 
@@ -46,9 +51,6 @@
                                  constraintName="user_site_id_fkey"
                                  referencedTableName="sites" referencedColumnNames="id"/>
 
-        <addForeignKeyConstraint baseTableName="users" baseColumnNames="invitor_user_id"
-                                 constraintName="user_invitor_user_id_fkey"
-                                 referencedTableName="users" referencedColumnNames="id"/>
     </changeSet>
 </databaseChangeLog>
 
