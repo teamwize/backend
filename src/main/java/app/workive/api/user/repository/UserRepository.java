@@ -9,14 +9,14 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends BaseJpaRepository<User, Long> {
-    @EntityGraph(attributePaths = { "organization","site"}, type = EntityGraph.EntityGraphType.FETCH)
+    @EntityGraph(attributePaths = { "organization"}, type = EntityGraph.EntityGraphType.FETCH)
     Optional<User> findByOrganizationIdAndId(long organizationId, long userId);
 
     boolean existsByEmail(String email);
 
-    @EntityGraph(attributePaths = {"organization","site"}, type = EntityGraph.EntityGraphType.FETCH)
+    @EntityGraph(attributePaths = {"organization"}, type = EntityGraph.EntityGraphType.FETCH)
     Optional<User> findByEmail(String email);
 
-    @EntityGraph(attributePaths = { "organization","site"}, type = EntityGraph.EntityGraphType.FETCH)
+    @EntityGraph(attributePaths = { "organization"}, type = EntityGraph.EntityGraphType.FETCH)
     List<User> findByOrganizationId(Long organization);
 }

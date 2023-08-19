@@ -2,7 +2,6 @@ package app.workive.api.user.domain.response;
 
 
 import app.workive.api.organization.domain.response.OrganizationCompactResponse;
-import app.workive.api.site.domain.response.SiteResponse;
 import app.workive.api.user.domain.UserRole;
 import app.workive.api.user.domain.UserStatus;
 import lombok.Data;
@@ -31,6 +30,4 @@ public class UserResponse {
     @Nonnull
     private OrganizationCompactResponse organization;
 
-    @Nonnull
-    private SiteResponse site;
 }

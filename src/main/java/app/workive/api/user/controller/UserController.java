@@ -26,8 +26,14 @@ public class UserController {
     private final UserService userService;
     private final SecurityService securityService;
 
+    @GetMapping("mine")
+    public UserResponse getMyProfile() throws UserNotFoundException {
+        return userService.getUser(securityService.getUserOrganizationId(), securityService.getUserId());
+    }
+
+
     @GetMapping("{userId}")
-    public UserResponse getMyProfile(@PathVariable Long userId) throws UserNotFoundException {
+    public UserResponse getUser(@PathVariable Long userId) throws UserNotFoundException {
         return userService.getUser(securityService.getUserOrganizationId(), userId);
     }
 

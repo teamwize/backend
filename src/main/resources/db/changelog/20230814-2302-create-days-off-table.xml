@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="20230814-2302-create-days-off-table" author="M.Karimi">
+        <createSequence sequenceName="day_off_id_seq" startValue="1" minValue="1" incrementBy="1" cycle="false"/>
+
+        <createTable tableName="days_off">
+            <column name="id" type="BIGINT" defaultValue="nextval('day_off_id_seq')">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="days_off_key_pkey"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="updated_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+
+            <column name="start" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="end" type="TIMESTAMP WITHOUT TIME ZONE"/>
+
+            <column name="status" type="VARCHAR" />
+            <column name="type" type="VARCHAR" />
+
+            <column name="organization_id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="metadata" type="JSONB" />
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="days_off" baseColumnNames="organization_id"
+                                 constraintName="days_off_organization_id_fkey"
+                                 referencedTableName="organizations" referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="days_off" baseColumnNames="user_id"
+                                 constraintName="days_off_user_id_fkey"
+                                 referencedTableName="users" referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="20230819-1310-update-start-end-in-days-off-table" author="M.Karimi">
+        <renameColumn tableName="days_off"   oldColumnName="start" newColumnName="start_at"/>
+        <renameColumn tableName="days_off" oldColumnName="end" newColumnName="end_at"/>
+    </changeSet>
+
+</databaseChangeLog>

@@ -9,6 +9,8 @@ public record DayOffResponse(
         Long id,
         LocalDateTime createdAt,
         LocalDateTime updatedAt,
+        LocalDateTime startAt,
+        LocalDateTime endAt,
         DayOffStatus status,
         DayOffType type) {
 }
