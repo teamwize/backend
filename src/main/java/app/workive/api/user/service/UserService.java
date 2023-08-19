@@ -3,8 +3,6 @@ package app.workive.api.user.service;
 import app.workive.api.auth.domain.AuthUserDetails;
 import app.workive.api.auth.exception.UserAlreadyActivatedException;
 import app.workive.api.organization.domain.entity.Organization;
-import app.workive.api.organization.domain.response.OrganizationResponse;
-import app.workive.api.site.domain.entity.Site;
 import app.workive.api.user.domain.UserRole;
 import app.workive.api.user.domain.UserStatus;
 import app.workive.api.user.domain.entity.User;
@@ -43,8 +41,8 @@ public class UserService {
         }
     }
 
-    public UserResponse getUser(long siteId, long userId) throws UserNotFoundException {
-        var user = getById(siteId, userId);
+    public UserResponse getUser(long organizationId, long userId) throws UserNotFoundException {
+        var user = getById(organizationId, userId);
         return userMapper.toUserResponse(user);
     }
 
@@ -70,15 +68,14 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponse createOrganizationAdmin(Long organizationId,Long siteId, AdminUserCreateRequest request) throws UserAlreadyExistsException {
+    public UserResponse createOrganizationAdmin(Long organizationId, AdminUserCreateRequest request) throws UserAlreadyExistsException {
         checkIfUserExists(request.getEmail());
         var user = buildUser(request.getEmail(),
                 UserRole.ORGANIZATION_ADMIN,
                 request.getFirstName(),
                 request.getLastName(),
                 request.getPhone(),
-                organizationId,
-                siteId
+                organizationId
         );
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user = userRepository.merge(user);
@@ -86,7 +83,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponse createSiteUser(Long organizationId,Long siteId, UserCreateRequest request)
+    public UserResponse createSiteUser(Long organizationId, UserCreateRequest request)
             throws UserAlreadyExistsException {
         checkIfUserExists(request.getEmail());
         var user = buildUser(
@@ -95,8 +92,7 @@ public class UserService {
                 request.getFirstName(),
                 request.getLastName(),
                 request.getPhone(),
-                organizationId,
-                siteId
+                organizationId
         );
         userRepository.update(user);
         return userMapper.toUserResponse(user);
@@ -150,16 +146,16 @@ public class UserService {
     }
 
     @Transactional
-    public void resetPassword(Long siteId, Long userId, String password) throws UserNotFoundException {
-        var user = getById(siteId, userId);
+    public void resetPassword(Long organizationId, Long userId, String password) throws UserNotFoundException {
+        var user = getById(organizationId, userId);
         user.setPassword(passwordEncoder.encode(password));
         userRepository.update(user);
     }
 
     @Transactional
-    public UserResponse setPasswordAfterInvitationActivation(Long siteId, Long userId, String password) throws UserNotFoundException,
+    public UserResponse setPasswordAfterInvitationActivation(Long organizationId, Long userId, String password) throws UserNotFoundException,
             UserAlreadyActivatedException {
-        var user = getById(siteId, userId);
+        var user = getById(organizationId, userId);
         checkActivatingIsAllowed(userId, password);
         user.setPassword(passwordEncoder.encode(password));
         return userMapper.toUserResponse(userRepository.update(user));
@@ -172,7 +168,7 @@ public class UserService {
     }
 
     private User buildUser(String email, UserRole role, String firstName, String lastName, String phone,
-                           Long organizationId,Long siteId) {
+                           Long organizationId) {
         return new User()
                 .setStatus(UserStatus.ENABLED)
                 .setEmail(email)
@@ -180,7 +176,6 @@ public class UserService {
                 .setFirstName(firstName)
                 .setLastName(lastName)
                 .setPhone(phone)
-                .setSite(new Site(siteId))
                 .setOrganization(new Organization(organizationId));
     }
 

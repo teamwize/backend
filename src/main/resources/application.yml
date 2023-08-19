@@ -43,6 +43,9 @@ spring:
     url: jdbc:postgresql://localhost:5430/workive-db
   jackson:
     property-naming-strategy: SNAKE_CASE
+  docker:
+    compose:
+      lifecycle-management: start_only
 management:
   endpoints:
     web:
@@ -72,4 +75,3 @@ springdoc:
   api-docs:
     enabled: true
     path: /swagger-ui/openapi.json
-

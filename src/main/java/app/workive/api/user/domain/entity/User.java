@@ -3,10 +3,10 @@ package app.workive.api.user.domain.entity;
 
 import app.workive.api.base.domain.entity.BaseAuditEntity;
 import app.workive.api.organization.domain.entity.Organization;
-import app.workive.api.site.domain.entity.Site;
 import app.workive.api.user.domain.UserRole;
 import app.workive.api.user.domain.UserStatus;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import jakarta.persistence.*;
@@ -15,6 +15,7 @@ import jakarta.persistence.*;
 @Setter
 @Entity
 @Table(name = "users")
+@NoArgsConstructor
 public class User extends BaseAuditEntity {
     @Id
     @GeneratedValue(generator = "user_id_seq_generator")
@@ -32,10 +33,11 @@ public class User extends BaseAuditEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Organization organization;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Site site;
 
     @Enumerated(EnumType.STRING)
     private UserStatus status;
 
+    public User(Long userId) {
+        this.id = userId;
+    }
 }

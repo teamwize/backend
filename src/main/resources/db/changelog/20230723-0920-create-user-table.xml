@@ -29,10 +29,6 @@
                 <constraints nullable="false"/>
             </column>
 
-            <column name="site_id" type="BIGINT">
-                <constraints nullable="false"/>
-            </column>
-
             <column name="country" type="VARCHAR" />
 
             <column name="timezone" type="VARCHAR" />
@@ -46,10 +42,6 @@
         <addForeignKeyConstraint baseTableName="users" baseColumnNames="organization_id"
                                  constraintName="user_organization_id_fkey"
                                  referencedTableName="organizations" referencedColumnNames="id"/>
-
-        <addForeignKeyConstraint baseTableName="users" baseColumnNames="site_id"
-                                 constraintName="user_site_id_fkey"
-                                 referencedTableName="sites" referencedColumnNames="id"/>
 
     </changeSet>
 </databaseChangeLog>

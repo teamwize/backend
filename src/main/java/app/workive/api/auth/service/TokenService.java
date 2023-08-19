@@ -100,11 +100,10 @@ public class TokenService {
         return false;
     }
 
-    public String generateAccessToken(String subject, Long organizationId, Long siteId, Long userId, UserRole role, LocalDateTime expiresAt) {
+    public String generateAccessToken(String subject, Long organizationId, Long userId, UserRole role, LocalDateTime expiresAt) {
         Map<String, Object> claims = Map.of(
                 "type", JwtTokenType.ACCESS_TOKEN.toString(),
                 "organizationId", organizationId,
-                "siteId", siteId,
                 "userId", userId,
                 "role", role.toString()
         );

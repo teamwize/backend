@@ -13,12 +13,14 @@ import java.util.List;
 public class PagedResponse<T> {
     @Nonnull
     List<T> contents;
+
     @Nonnull
-    PaginationResponse pagination;
+    Integer pageNumber;
+    @Nonnull
+    Integer pageSize;
+    @Nonnull
+    Integer totalPages;
+    @Nonnull
+    Long totalContents;
 
-
-    public PagedResponse(List<T> contents, Integer pageNumber, Integer pageSize, Integer totalPages, Long totalContents) {
-        this.pagination = new PaginationResponse(pageNumber, pageSize, totalPages, totalContents);
-        this.contents = contents;
-    }
 }
