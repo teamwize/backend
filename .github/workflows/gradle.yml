@@ -29,6 +29,6 @@ jobs:
     - name: Build with Gradle
       uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25 # v2.6.0
     - name: Build with Gradle
-      run: ./gradlew build   
+      run: gradle build
     - name: Test with Gradle
-      run: ./gradlew test          
+      run: gradle test          
