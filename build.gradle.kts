@@ -64,7 +64,7 @@ jib { // Unpacks the jar file, creates optimized (multi-layer) docker image and 
 		image = "openjdk:17-alpine" // Base image
 	}
 	to {
-		image = "ghcr.io/teamwize/api"
+		image = "ghcr.io/teamwize/api:dev"
 		tags = setOf("dev")
 	}
 }
