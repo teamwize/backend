@@ -2,7 +2,7 @@ plugins {
 	java
 	id("org.springframework.boot") version "3.1.2"
 	id("io.spring.dependency-management") version "1.1.2"
-	id("org.graalvm.buildtools.native") version "0.9.23"
+	id("com.google.cloud.tools.jib") version "3.3.2"
 }
 
 group = "app.workive"
@@ -56,4 +56,15 @@ dependencies {
 
 tasks.withType<Test> {
 	useJUnitPlatform()
+}
+
+
+jib { // Unpacks the jar file, creates optimized (multi-layer) docker image and pushes to the remote repository
+	from {
+		image = "openjdk:17-alpine" // Base image
+	}
+	to {
+		image = "ghcr.io/teamwize/api:dev"
+		tags = setOf("dev")
+	}
 }

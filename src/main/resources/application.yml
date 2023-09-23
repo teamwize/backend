@@ -46,6 +46,7 @@ spring:
   docker:
     compose:
       lifecycle-management: start_only
+      enabled: true
 management:
   endpoints:
     web:
